@@ -1,5 +1,5 @@
 ---
-theme: default
+theme: the-unnamed
 ---
 
 # Introduction to React Hooks
