@@ -128,10 +128,100 @@ function MouseTracker() {
 
 ## useReducer Hook
 
-- Introduction to the useReducer hook for managing complex state logic.
-- Comparison with useState and scenarios where useReducer is preferred.
-- Understanding the reducer function and dispatching actions.
-- Real-world examples showcasing useReducer for state management.
+- `useReducer` is a hook provided by React for managing complex state logic in functional components.
+- It is an alternative to `useState` when the state logic is more complex and involves multiple sub-values or when the next state depends on the previous one.
+- It is suitable for scenarios where the state logic is more complex and involves multiple sub-values.
+- It follows the reducer pattern similar to Redux.
+
+---
+
+## useReducer ex1
+
+```js
+import React, { useReducer } from 'react';
+
+const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      throw new Error('Unsupported action type');
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: 'increment' })}>Increment</button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>Decrement</button>
+    </div>
+  );
+}
+```
+
+---
+layout: two-cols
+---
+
+## useReducer ex2
+
+```js
+import React, { useReducer } from 'react';
+
+const initialState = {
+  loading: false,
+  error: null,
+  data: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return { ...state, loading: false, data: action.payload };
+    case 'FETCH_ERROR':
+      return { ...state, loading: false, error: action.payload };
+    default:
+      throw new Error('Unsupported action type');
+  }
+}
+```
+
+::right::
+
+```js
+function DataFetcher() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    dispatch({ type: 'FETCH_REQUEST' });
+    fetch('https://api.example.com/data')
+      .then((response) => response.json())
+      .then((data) => dispatch({ type: 'FETCH_SUCCESS', payload: data }))
+      .catch((error) => dispatch({ type: 'FETCH_ERROR', payload: error }));
+  }, []);
+
+  return (
+    <div>
+      {state.loading ? (
+        <p>Loading...</p>
+      ) : state.error ? (
+        <p>Error: {state.error.message}</p>
+      ) : (
+        <p>Data: {state.data}</p>
+      )}
+    </div>
+  );
+}
+```
 
 ---
 
